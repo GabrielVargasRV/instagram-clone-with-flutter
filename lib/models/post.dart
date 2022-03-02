@@ -25,7 +25,7 @@ class Post{
 
   Map<String, dynamic> toJson() => {
     "uid": uid,
-    "profilemage": profileImage,
+    "profileImage": profileImage,
     "username": username,
     "description": description,
     "postId": postId,
