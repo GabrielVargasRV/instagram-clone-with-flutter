@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:insta/models/user.dart';
 import 'package:insta/providers/user_provider.dart';
 import 'package:insta/resources/firestore_methods.dart';
+import 'package:insta/screens/comments_screen.dart';
 import 'package:insta/utils/colors.dart';
 import 'package:insta/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -57,9 +58,13 @@ class _PostCardState extends State<PostCard> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shrinkWrap: true,
                         children: [
-                          "Delete"
+                          widget.snap['uid'] == user.uid ? "Delete" : "Report"
                         ].map((e) => InkWell(
-                          onTap:(){},
+                          onTap:()async{
+                            if(widget.snap['uid'] == user.uid){
+                              FirestoreMethods().deletePost(postId: widget.snap['postId']);
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             child: Text(e)
@@ -88,10 +93,10 @@ class _PostCardState extends State<PostCard> {
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                height: MediaQuery.of(context).size.height*0.35,
-                width: double.infinity,
-                child: Image.network(
-                   widget.snap['postUrl'],
+                  height: MediaQuery.of(context).size.height*0.35,
+                  width: double.infinity,
+                  child: Image.network(
+                    widget.snap['postUrl'],
                     fit: BoxFit.cover
                   )
                 ),
@@ -132,7 +137,11 @@ class _PostCardState extends State<PostCard> {
               ),
               IconButton(
                 icon: const Icon(Icons.comment_outlined,color: primaryColor),
-                onPressed: () {}
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => CommentsScreen(
+                    snap: widget.snap
+                  )));
+                }
               ),
               IconButton(
                 icon: const Icon(Icons.send,color: primaryColor),
@@ -180,10 +189,14 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 InkWell(
-                  onTap: (){},
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CommentsScreen(
+                      snap: widget.snap
+                    )));
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: const Text("View all 200 comments",style: TextStyle(fontSize: 16,color: secondaryColor))
+                    child: const Text("View all comments",style: TextStyle(fontSize: 16,color: secondaryColor))
                   ),
                 ),
                 Container(
