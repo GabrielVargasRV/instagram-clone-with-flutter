@@ -63,6 +63,7 @@ class _PostCardState extends State<PostCard> {
                           onTap:()async{
                             if(widget.snap['uid'] == user.uid){
                               FirestoreMethods().deletePost(postId: widget.snap['postId']);
+                              Navigator.of(context).pop();
                             }
                           },
                           child: Container(
