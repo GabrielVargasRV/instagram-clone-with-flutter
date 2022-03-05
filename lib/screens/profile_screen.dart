@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:insta/resources/firestore_methods.dart';
 import 'package:insta/utils/colors.dart';
 import 'package:insta/utils/utils.dart';
 
@@ -41,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         postLen = postSnap.docs.length;
         followersLen = userSnap.data()!['followers'].length;
         followingLen = userSnap.data()!['following'].length;
-        isFollowing = userSnap.data()!['following'].contains(FirebaseAuth.instance.currentUser!.uid);
+        isFollowing = userSnap.data()!['followers'].contains(FirebaseAuth.instance.currentUser!.uid);
         isLoaded = true;
       });
     }catch(err){
@@ -101,14 +102,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   textColor: Colors.black,
                                   backgroundColor: Colors.white,
                                   borderColor: Colors.grey,
-                                  function: () {}
+                                  function: ()async{
+                                    await FirestoreMethods().followUser(uid: widget.uid);
+                                    setState((){
+                                      isFollowing = false;
+                                      followersLen -= 1;
+                                    });
+                                  }
                               ) :
                               FollowButton(
                                   text: 'Follow',
                                   textColor: Colors.white,
                                   backgroundColor: Colors.blueAccent,
                                   borderColor: Colors.blueAccent,
-                                  function: () {}
+                                  function: () async{
+                                    await FirestoreMethods().followUser(uid: widget.uid);
+                                    setState((){
+                                      isFollowing = true;
+                                      followersLen += 1;
+                                    });
+                                  }
                               )
                             ]
                         )
